@@ -46,7 +46,9 @@ public class NIOServer {
             while (keyIterator.hasNext()) {
                 // 獲取到 SelectionKey
                 SelectionKey key = keyIterator.next();
+
                 // 根據 key 對應的通道發生的事件做相應處理
+
                 if (key.isAcceptable()) { //如果是 OP_ACCEPT，有新的客戶連接
                     // 該客戶端生成一個 SocketChannel
                     SocketChannel socketChannel = serverSocketChannel.accept();
@@ -56,6 +58,8 @@ public class NIOServer {
                     // 將 socketChannel 註冊到 select，關注事件為 OP_READ，同時給 socketChannel
                     // 關聯一個 Buffer
                     socketChannel.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(1024));
+
+                    System.out.println("註冊後的 selectionKey 數量 = " + selector.keys().size()); // 2,3,4 ...
                 }
 
                 if (key.isReadable()) { // 發生 OP_READ

@@ -25,7 +25,7 @@ public class GroupChatServer {
             // 設置非阻塞模式
             listenChannel.configureBlocking(false);
             // 將該 listenChannel 註冊到 selector
-            listenChannel.register(selector, SelectionKey.OP_READ);
+            listenChannel.register(selector, SelectionKey.OP_ACCEPT);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,7 +88,7 @@ public class GroupChatServer {
             ByteBuffer buffer = ByteBuffer.allocate(1024);
 
             int count = channel.read(buffer);
-            // 根據 count的值做處理
+            // 根據 count的值做處理 長度
             if (count > 0) {
                 //把緩存區的數據轉成字符串
                 String msg = new String(buffer.array());

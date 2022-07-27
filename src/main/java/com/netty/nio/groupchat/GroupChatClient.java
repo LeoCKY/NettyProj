@@ -7,13 +7,14 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.Scanner;
 
 public class GroupChatClient {
 
-    // 定義相關的屬性
-    private final String HOST = "127.0.0.1";  //服務器的IP
+    // 定義相關屬性
+    private final String HOST = "127.0.0.1";
 
-    private final int PORT = 6667; // 服務器端口
+    private final int PORT = 6667;
 
     private Selector selector;
 
@@ -21,17 +22,24 @@ public class GroupChatClient {
 
     private String userName;
 
-    // 初始化工作
+
     public GroupChatClient() throws IOException {
+
         selector = Selector.open();
-        // 設置服務器
-        socketChannel.open(new InetSocketAddress(HOST, PORT));
+
+        // 連接服務器
+        socketChannel = socketChannel.open(new InetSocketAddress(HOST, PORT));
+
+        // 設置非阻塞
         socketChannel.configureBlocking(false);
-        //將 Channel 註冊到 selector
+
+        // 將 channel 註冊到 selector
         socketChannel.register(selector, SelectionKey.OP_READ);
-        //得到 userName
+
+        // 得到 userName
         userName = socketChannel.getLocalAddress().toString().substring(1);
-        System.out.println(userName + " is ok....");
+        System.out.println(userName + " is ok... ");
+
     }
 
     // 向服務器發送消息
@@ -44,18 +52,16 @@ public class GroupChatClient {
         }
     }
 
-    // 讀取從服務器回復的訊息
+    // 讀取服務器回復的消息
     public void readInfo() {
-
         try {
-            int readChannel = selector.select();
-
-            if (readChannel > 0) {
+            int readChannels = selector.select();
+            if (readChannels > 0) { // 有可以用的通道
                 Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
                 while (iterator.hasNext()) {
                     SelectionKey key = iterator.next();
                     if (key.isReadable()) {
-                        // 得到相關的通道
+                        // 得到相關得通道
                         SocketChannel sc = (SocketChannel) key.channel();
                         // 得到一個 Buffer
                         ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -65,15 +71,37 @@ public class GroupChatClient {
                         String msg = new String(buffer.array());
                         System.out.println(msg.trim());
                     }
-
                 }
+                iterator.remove(); //刪除當前的 selectionKey，防止重複操作
             } else {
-//                System.out.println("沒有可以用的通道...");
+                System.out.println("沒有可用的通道....");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public static void main(String[] args) throws Exception {
+        // 啟動我們客戶端
+        GroupChatClient chatClient = new GroupChatClient();
+        // 啟動一個線程，每個 3 秒，讀取從服務器發送資料
+        new Thread(() -> {
+            while (true) {
+                chatClient.readInfo();
+                try {
+                    Thread.currentThread().sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        // 發送資料給服務器端
+        Scanner scanner = new Scanner(System.in);
+
+        while (scanner.hasNextLine()) {
+            String s = scanner.nextLine();
+            chatClient.sendInfo(s);
+        }
     }
 }

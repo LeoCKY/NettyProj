@@ -92,6 +92,7 @@ public class GroupChatServer {
             if (count > 0) {
                 //把緩存區的數據轉成字符串
                 String msg = new String(buffer.array());
+                System.out.println("msg : " + msg.length());
                 //輸出該消息
                 System.out.println("form 客戶端: " + msg);
 

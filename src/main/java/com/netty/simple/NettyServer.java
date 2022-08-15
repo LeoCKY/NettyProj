@@ -36,7 +36,7 @@ public class NettyServer {
                         // 給 pipeline 設置處理器
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-//                            socketChannel.pipeline().addLast(new NettyServerHandler());
+                            socketChannel.pipeline().addLast(new NettyServerHandler());
                         }
                     }); // 給我們的 workerGroup 的 EventLoop 對應的管道設置處理器
 

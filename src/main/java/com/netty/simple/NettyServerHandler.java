@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelPipeline;
 import io.netty.util.CharsetUtil;
 
 /**
@@ -25,7 +26,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         System.out.println("server ctx = " + ctx);
         System.out.println("看看 channel 和 pipeline的關係");
         Channel channel = ctx.channel();
-        ctx.pipeline(); //本質是一個雙向鏈接，出站入站
+        ChannelPipeline pipeline = ctx.pipeline(); //本質是一個雙向鏈接，出站入站
 
         // 將 msg 轉成一個 ByteBuf
         // ByteBuf 是 Netty 提供的，不是 NIO 的 ByteBuffer
@@ -49,7 +50,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     //處理異常，一般是需要關閉通道
-
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         ctx.close();

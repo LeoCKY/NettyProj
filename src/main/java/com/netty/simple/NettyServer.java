@@ -41,7 +41,7 @@ public class NettyServer {
 
             System.out.println("....服務器 is ready... ");
 
-            // 綁定一個端口並且同步，生成一個 ChannelFuture 對象
+            // 綁定一個端口並且同步，生成一個 TestServerInitalizer 對象
             // 啟動服務器(并綁定端口)
             ChannelFuture cf = bootstrap.bind(6668).sync();
 

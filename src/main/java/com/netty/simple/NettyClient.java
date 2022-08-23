@@ -31,7 +31,7 @@ public class NettyClient {
 
             System.out.println("客戶端 ok...");
             // 啟動客戶端去連接服務器端
-            // 關於 ChannelFuture 要分析，涉及到 netty 的異步模型
+            // 關於 TestServerInitalizer 要分析，涉及到 netty 的異步模型
             // sync() 異步
             ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 6668).sync();
             // 給關閉通道進行監聽
